@@ -1,12 +1,13 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 
 public class Editor implements ActionListener {
     JFrame md;
     JMenuBar Menu;
     JMenu file,edit;
-    JMenuItem newfile,openfile,closefile;
+    JMenuItem newfile,openfile,closefile,savefile;
     JMenuItem cut, copy,paste,selectAll,close;
     JTextArea area;
 
@@ -29,15 +30,18 @@ public class Editor implements ActionListener {
 //        Insilize menu items
         newfile =new JMenuItem("New File");
         openfile=new JMenuItem("Open File");
+        savefile=new JMenuItem("Save File");
         closefile=new JMenuItem("Close");
         file.add(newfile);
         file.add(openfile);
         file.add(closefile);
+        file.add(savefile);
 
 //        adding action to menu items
         newfile.addActionListener(this);
         openfile.addActionListener(this);
         closefile.addActionListener(this);
+        savefile.addActionListener(this);
 
 
 
@@ -76,13 +80,51 @@ public class Editor implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
  if(e.getSource()==newfile){
-
+     Editor start=new Editor();
  }
+
  if(e.getSource()==openfile){
+     JFileChooser openFile =new JFileChooser("c");
+     int chooseOption =openFile.showOpenDialog(null);
+
+     if(chooseOption==JFileChooser.APPROVE_OPTION){
+         File file =openFile.getSelectedFile();
+         String path=file.getPath();
+         try {
+             BufferedReader bufferedReader =new BufferedReader(new FileReader(path));
+             String intermidate=" ",output=" ";
+             while ((intermidate=bufferedReader.readLine())!=null){
+                 output+=intermidate +"\n";
+
+             }
+             area.setText(output);
+         }catch (Exception error){
+             System.out.println(error);
+         }
+     }
 
  }
- if(e.getSource()==closefile){
 
+
+ if(e.getSource()==savefile){
+JFileChooser saveFile =new JFileChooser("c");
+saveFile.setApproveButtonText("Save");
+int chooseOption =saveFile.showSaveDialog(null);
+if (chooseOption==JFileChooser.APPROVE_OPTION){
+    File file =new File(saveFile.getSelectedFile().getAbsoluteFile()+"text");
+    String filepath=file.getPath();
+    try {
+        BufferedWriter outfile=null;
+        outfile=new BufferedWriter(new FileWriter(file));
+        area.write(outfile);
+        outfile.close();
+    }catch(Exception error){
+        System.out.println(error);
+    }
+}
+        }
+ if(e.getSource()==closefile){
+     System.exit(0);
  }
  if(e.getSource()==close){
 System.exit(0);
